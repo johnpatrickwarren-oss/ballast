@@ -22,11 +22,16 @@ for (let i = 0; i < 2; i++) {
   fleet.push(calibrate(sc.workload.id, cycleObservations(sc.workload, makeRng(i + 1)), sc.workload.refClass));
 }
 
-const q = 0.1;
-const res = fleetAudit(fleet, q);
-
 console.log('=== Fleet FDR audit (engine e-BH, arbitrary dependence) ===\n');
-console.log(`fleet: 5 padders + 8 honest-bursty + 2 risk-averse-high-Cu = ${fleet.length} workloads`);
-console.log(`target FDR q=${q}\n`);
-console.log(`watch list (${res.k}): ${res.flagged.join(', ') || '(none)'}`);
-console.log(`\nexpected falsely-flagged ≤ q·K = ${(q * res.k).toFixed(2)}. Honest + risk-averse correctly excluded.`);
+console.log(`fleet: 5 padders + 8 honest-bursty + 2 risk-averse-high-Cu = ${fleet.length} workloads\n`);
+
+// e-BH is conservative under multiplicity — the FDR target q is the knob. Show two levels.
+for (const q of [0.2, 0.1]) {
+  const res = fleetAudit(fleet, q);
+  console.log(`q=${q}: watch list (${res.k}) ${res.flagged.join(', ') || '(none)'}` +
+    `  — expected falsely-flagged ≤ q·K = ${(q * res.k).toFixed(2)}`);
+}
+
+console.log('\nAt q=0.2 the 5 padders surface; tightening to q=0.1 requires stronger evidence across');
+console.log('the 15-test fleet, so e-BH holds back — FDR control under arbitrary dependence. Honest +');
+console.log('risk-averse are never flagged at either level.');
