@@ -1,0 +1,49 @@
+[
+  {
+    "id": "no-god-files",
+    "intent": "No source file over 800 lines (God file) — split it.",
+    "check": { "kind": "oversized_files", "maxLines": 800 },
+    "mode": "ratchet",
+    "severity": "block"
+  },
+  {
+    "id": "no-complex-functions",
+    "intent": "No function with cyclomatic complexity over 12 — flags branchy hard-to-test functions.",
+    "check": { "kind": "max_complexity", "maxComplexity": 12 },
+    "mode": "ratchet",
+    "severity": "block",
+    "lang": "ts",
+    "engine": "ast-grep"
+  },
+  {
+    "id": "no-god-functions",
+    "intent": "Coarse backstop: no function over 150 lines (catches huge-but-flat functions complexity misses).",
+    "check": { "kind": "max_function_lines", "maxLines": 150 },
+    "mode": "ratchet",
+    "severity": "block",
+    "lang": "ts",
+    "engine": "ast-grep"
+  },
+  {
+    "id": "no-god-module",
+    "intent": "No module imported by more than 20 files (coupling hub / God module). Excludes test files; admits zero-behavior type/contract modules (domain.ts).",
+    "check": { "kind": "module_fanin", "maxFanin": 20 },
+    "mode": "ratchet",
+    "severity": "block"
+  },
+  {
+    "id": "require-tests",
+    "intent": "Every source module under src/ ships with a test (src/foo.ts <-> test/foo.test.ts). Ratchet grandfathers existing; blocks new untested files.",
+    "check": { "kind": "require_tests", "dirs": ["src"] },
+    "mode": "ratchet",
+    "severity": "block"
+  },
+  {
+    "id": "no-time-bomb-tests",
+    "intent": "No test pinned to a frozen git ref/SHA.",
+    "check": { "kind": "time_bomb_tests", "dirs": ["."] },
+    "max": 0,
+    "mode": "ratchet",
+    "severity": "block"
+  }
+]
